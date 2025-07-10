@@ -1,0 +1,8 @@
+Source VLAN,Destination VLAN,Protocol,Port(s),Action,Notes
+10,Any,Any,Any,Allow,Full access from Admin VLAN
+20,10,TCP,32400,Deny,Media VLAN cannot access Admin services (e.g. Plex dashboard)
+30,20,TCP,Any,Deny,IoT VLAN cannot reach media servers
+30,Any,Any,Any,Allow,IoT has outbound internet-only access
+40,Any,Any,Any,Deny,Guest VLAN blocked from all internal access
+40,Internet,Any,Any,Allow,Guest VLAN can reach internet only
+

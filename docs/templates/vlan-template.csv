@@ -1,0 +1,5 @@
+VLAN ID,VLAN Name,Subnet,Gateway,DHCP Range,Description
+10,Admin,10.10.10.0/24,10.10.10.1,10.10.10.100-199,Trusted devices and workstations
+20,Media,10.20.20.0/24,10.20.20.1,10.20.20.100-199,Plex and internal media servers
+30,IoT,10.30.30.0/24,10.30.30.1,10.30.30.100-199,Smart home and untrusted IoT
+40,Guest,10.40.40.0/24,10.40.40.1,10.40.40.100-199,Guest WiFi with internet access only
