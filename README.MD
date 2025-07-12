@@ -1,51 +1,39 @@
 # homelab-build
 
-Documentation-first blueprint for transitioning from locked-down ISP gear to a segmented, enterprise-grade home network.
+A documentation-first blueprint for building a secure and segmented home lab environment from the ground up. This project tracks the full transformation from an ISP-issued all-in-one gateway into a purpose-built, enterprise-style network designed for learning, working, and experimenting safely at home.
 
-## Purpose
+## About This Project
 
-This project documents the real-world process of rebuilding a home network from the ground up using consumer-accessible hardware and open-source tools.
+This repository documents the step-by-step build of my personal home lab and segmented network. It began with a basic ISP setup using a Technicolor CGM4140COM gateway, which provided very little transparency, control, or security. I replaced that setup with my own hardware: an ARRIS S34 cable modem and a GL.iNet Flint AX1800 WiFi 6 router. This gives me a clean and fully controlled foundation to build upon.
 
-It is designed for those who want full ownership and control over their network — for cybersecurity learning, homelab services, and remote work infrastructure — without relying on restrictive ISP-provided equipment.
+## Current State (Phase 1)
 
-## Background
+The Flint router currently manages routing and basic firewall duties. I monitor traffic directly through Flint’s built-in interface. A Plex media server is already up and running on the new LAN, and there is early-stage segmentation between devices.
 
-The original setup used a Technicolor CGM4140COM “Panoramic WiFi Gateway” supplied and configured by the ISP. This all-in-one modem/router offered no VLAN support, limited administrative access, and lacked the flexibility needed for secure segmentation or advanced routing.
+In parallel, I have been experimenting with a mock-up of the future system using a second mini PC. This device is being used to test OPNsense firewall configurations and layout planning. Although it does not have the performance or I/O needed for the final setup, it has been a helpful tool for learning and preparation.
 
-To move toward a more professional and manageable network, this setup was decommissioned in favor of a modular, user-owned solution.
+## Next Steps (Planned Phase 2)
 
-## Current Build (Phase 1)
+The next major step is to deploy a Protectli mini PC running OPNsense. This will serve as the primary firewall and router. Alongside that, a managed TP-Link switch will allow for VLAN-based segmentation across the network. Once this is in place, the Flint router will be converted into a dedicated wireless access point.
 
-The current foundation is a clean, user-controlled LAN with modern hardware and no vendor lock-in:
+The planned network architecture includes:
+- A fully air-gapped lab environment for testing and security research
+- Separate VLANs for IoT devices, work-from-home machines, and household devices
+- Guest networks with isolated access
+- VPN and remote access configurations
+- Infrastructure support for penetration testing, monitoring, and training labs
 
-- **Cable Modem:** ARRIS S34 DOCSIS 3.1 (bridge-only modem)
-- **Router:** GL.iNet Flint AX1800 (WiFi 6) with full admin access
-- **Firmware:** OpenWrt-based UI with control over DHCP, DNS, routing, and basic firewall rules
-- **Services:** Self-hosted Plex Media Server running on the flat network
-
-This configuration represents Phase 1 of the rebuild. It reclaims full control from the ISP and establishes a secure, flexible base for further upgrades.
-
-## Planned Upgrade (Phase 2)
-
-The next step is a full migration to segmented, enterprise-style networking:
-
-- Deploy a Protectli mini PC running OPNsense as the core firewall and router
-- Implement VLAN segmentation across physical and virtual zones:
-  - VLAN 10: Admin / Workstations
-  - VLAN 20: Media / Plex Server
-  - VLAN 30: IoT Devices
-  - VLAN 40: Guests
-- Define strict inter-VLAN firewall rules to isolate services and reduce attack surface
-- Introduce IDS/IPS, site-to-site VPN, and secure remote access
-- Explore remote media access, external backup routines, and uptime monitoring
-
-Phase 2 is in progress and will be documented in detail as upgrades are implemented.
 
 ## Documentation Map
 
-Documentation and diagrams are organized in the `/docs` and `/diagrams` directories:
+Documentation and diagrams are organized in the /docs and /diagrams directories:
 
-- `docs/introduction.md` – project background and purpose
-- `docs/hardware/` – bill of materials, device roles
-- `docs/network/` – subnet planning,
+    docs/introduction.md – project background and purpose
+    docs/hardware/ – bill of materials, device roles
+    docs/network/ – subnet planning,
+
+
+## License
+
+This project is part of my public portfolio and is shared openly for others to learn from or build on. All documentation is versioned in plain text and updated as the lab evolves.
 
