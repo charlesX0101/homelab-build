@@ -1,4 +1,4 @@
-# Homelab-Build
+# Homelab Build
 
 A documentation-first blueprint for building a secure and segmented home lab environment from the ground up. This project tracks the full transformation from an ISP-issued all-in-one gateway into a purpose-built, enterprise-style network designed for learning, working, and experimenting safely at home.
 
