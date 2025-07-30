@@ -1,107 +1,112 @@
-# OPNsense / pfSense Hardening Plan
+# opnsense-hardening.md
 
-This document outlines the firewall hardening strategy for the future production OPNsense deployment. These steps are being actively tested and refined on a local mini PC mockup to validate the process and configuration before rollout to the primary homelab firewall (Protectli appliance).
+#OPNsense Hardening Strategy
 
-The hardening plan focuses on controlling administrative access, limiting surface area, and ensuring all service exposure is intentional and auditable.
+This document outlines the hardening measures applied to the live OPNsense
+firewall deployment running on a Protectli FW6E appliance. These controls are
+designed to minimize attack surface, enforce strict administrative access, and
+ensure that all exposed services are intentional, auditable, and limited.
 
----
+------------------------------------------------------------
 
-## Active Testing Environment
+#Access Control
 
-A local mini PC has been set up with a mock OPNsense install to practice:
+WebUI Access:
+- Restricted to VLAN 10 (Admin)
+- Explicitly blocked on all other interfaces including WAN
 
-- Admin interface lockdown
-- Firewall rule development
-- VPN and SSH secure access setup
-- Logging, DNS override, and interface isolation
+Custom Ports:
+- Web UI port changed from TCP 443 to a non-standard port
+- SSH service (if enabled) moved off port 22
 
-This sandbox environment allows the entire firewall build to be stress-tested and versioned before live deployment.
+SSH Lockdown:
+- SSH is disabled by default
+- If enabled, access is restricted to known internal clients
+- Password authentication is disabled
+- Key-based login is required
 
----
+User Management:
+- Only a single admin account is present
+- Default admin credentials changed
+- No shell access granted to non-admin users
 
-## Access Control
+------------------------------------------------------------
 
-- **WebUI Restriction:**
-  - Accessible only from Admin VLAN (VLAN 10)
-  - Blocked on WAN and non-admin interfaces
+#WAN and Service Exposure
 
-- **Custom Ports:**
-  - WebUI port changed from `443` to an uncommon port
-  - SSH moved off port `22`
+VPN Access:
+- WireGuard is the only service exposed on the WAN interface
+- WAN rules allow only the specific UDP VPN port
+- Connection attempts are logged and rate-limited
 
-- **SSH Lockdown:**
-  - Password login disabled
-  - Key-based access only from known clients
-  - SSH disabled entirely unless actively needed
+Port Forwarding:
+- TCP 32400 is optionally open for Plex media access
+- Forwarded only to the Plex host on VLAN 20
+- No other inbound ports are exposed by default
 
-- **User Management:**
-  - Only one non-default admin account
-  - No unnecessary shell users
+Bogon and Private Blocks:
+- Bogon networks blocked on WAN
+- Private ranges also blocked on WAN
 
----
+Anti-Lockout Rule:
+- Disabled
+- Admin access explicitly defined and limited to VLAN 10
 
-## WAN & Service Exposure
+------------------------------------------------------------
 
-- **VPN (WireGuard):**
-  - Only port exposed on WAN interface
-  - Connection attempts logged and rate-limited
+#Interface Behavior and Segmentation
 
-- **Plex Port Forwarding (Optional):**
-  - TCP 32400 allowed only to internal media server (VLAN 20)
-  - All other inbound access is disabled by default
+- Each VLAN interface is assigned its own firewall ruleset
+- Inter-VLAN access is denied by default
+- Admin interface is not accessible from any non-admin segment
+- Static mappings are defined for all core devices including switch, AP,
+  workstation, and Plex server
 
----
+------------------------------------------------------------
 
-## Interface Settings
-
-- Block private and bogon networks on WAN
-- Anti-lockout rule disabled in favor of explicit admin rules
-- Static mappings for all core devices (router, Plex, workstation)
-
----
-
-## DNS & DHCP Controls
+#DNS and DHCP Enforcement
 
 - DNS rebinding protection enabled
-- Only approved upstream resolvers allowed (e.g. Quad9, Cloudflare)
-- DHCP reservations for infrastructure devices to ensure consistent IPs
+- Resolver limited to upstream providers (e.g. Quad9, Cloudflare)
+- DNS traffic is allowed only to the internal resolver
+- DHCP leases restricted to known interfaces
+- Static reservations are configured for all infrastructure devices
 
----
+------------------------------------------------------------
 
-## Logging & Monitoring
+#Logging and Monitoring
 
-- Log all inter-VLAN traffic denials
-- Log VPN handshakes, port forwards, and WAN hits
-- Testing integration with Uptime Kuma and optional remote syslog in mockup
+- Logs retained for all:
+  - Blocked inter-VLAN traffic
+  - VPN handshakes
+  - Port forward hits
+  - Web UI access attempts
+- Firewall is being integrated with local monitoring (Uptime Kuma)
+- Optional syslog forwarding under consideration
 
----
+------------------------------------------------------------
 
-## Advanced Features (Under Evaluation)
+#Advanced Features (Staged or Under Evaluation)
 
-- Zenarmor or Suricata for intrusion detection
-- DNSBL or Pi-hole integration for ad/tracker blocking
-- Enforced DoH/DoT upstream resolution
+- Zenarmor and Suricata being evaluated for inline traffic inspection
+- DNSBL or Pi-hole integration under review for ad and tracker blocking
+- DoH and DoT upstream resolution support under consideration
 
----
+------------------------------------------------------------
 
-## Backups & Recovery
+#Backups and Recovery
 
-- Configuration backups exported regularly from the test box
-- Backup stored offline and synced manually after any rule or firmware change
-- Final deployment will follow same backup policy
+- Full configuration backups exported after each rule or interface change
+- Backup files are stored offline and versioned manually
+- No auto-sync or cloud exposure of firewall configuration
+- Recovery device and fallback config prepared for emergency redeployment
 
----
+------------------------------------------------------------
 
-## Patch Management
+#Patch Management
 
-- Firmware updates reviewed before install
 - Auto-updates disabled
-- Practice updates applied to the mockup first before pushing to production system
-
----
-
-## Summary
-
-The goal is to reduce exposure, isolate control surfaces, and keep every open port deliberate. The mock environment ensures that mistakes, regressions, or lockouts are handled in testing — not in production.
-
+- Firmware updates reviewed and tested before installation
+- Test changes and package upgrades trialed in a separate lab image
+- Product
 

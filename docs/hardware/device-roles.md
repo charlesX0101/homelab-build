@@ -1,96 +1,103 @@
-# Device Roles
+# device_roles.md
 
-This document describes the functional role of each key component in the homelab network, with focus on how control, segmentation, and future upgrades are shaped by device capabilities.
+#Device Roles
 
----
+This document describes the role of each core component in the segmented homelab
+network. It explains how control is enforced, how traffic is segmented, and how
+each device contributes to a secure, modular infrastructure.
 
-## ARRIS S34 DOCSIS 3.1 (Cable Modem)
+------------------------------------------------------------
 
-- **Role:** Pure modem — provides a clean, bridged connection to the ISP.
-- **Reasoning:** This device removes all NAT, routing, and WiFi responsibilities from the modem layer, allowing full control to shift to the router.
-- **Benefits:**
-  - No double NAT
-  - No ISP lock-in
-  - Transparent handoff to user-managed router
+#ARRIS S34 DOCSIS 3.1 (Cable Modem)
+Role: Pure modem
+Notes: Transparent bridge to ISP. No routing, NAT, or WiFi functions.
 
----
+------------------------------------------------------------
 
-## GL.iNet Flint AX1800 (Router + WiFi AP)
+#Protectli Vault FW6E (Firewall and Router)
+Role: Core gateway and segmentation point
+Notes:
+- Runs OPNsense
+- Manages VLANs, DHCP, DNS, firewall rules
+- Provides trunked VLAN interface to switch
+- Optional future use: Suricata IDS/IPS, VPN server
 
-- **Role:** Primary LAN gateway and WiFi access point
-- **Capabilities:**
-  - DHCP, DNS, basic firewall
-  - WiFi 6 for modern wireless clients
-  - OpenWrt-based firmware for advanced customization
-- **Current Tasks:**
-  - Handles all internal routing
-  - Hosts port-forwarding and static leases for internal services
-- **Limitations:**
-  - Lacks VLAN support across interfaces
-  - Not ideal for inter-VLAN firewall rules or intrusion detection
-  - Will eventually be demoted to access point role only
+------------------------------------------------------------
 
----
+#TP-Link TL-SG2210MP (Managed Switch)
+Role: VLAN trunking and access port isolation
+Notes:
+- Tagged trunk uplink to Protectli firewall
+- Tagged downlink to UniFi AP
+- Untagged access ports mapped per VLAN
+- Provides PoE to access point
 
-## Plex Media Server
+------------------------------------------------------------
 
-- **Role:** Internal service host and media platform
-- **Network Position:** Static IP on the flat LAN
-- **Use Case:**
-  - Early proof-of-concept for internal service hosting
-  - Used to validate port forwarding, internal DNS, and throughput under load
-- **Planned Migration:**
-  - Will be moved to a dedicated VLAN in Phase 2
-  - Access limited by firewall rules (e.g., only accessible by trusted devices)
+#TP-Link TL-SG1210MP (Unmanaged Switch)
+Role: Expansion switch for LAB VLAN
+Notes:
+- Connected to access port carrying untagged VLAN 20
+- Used for wired test systems, attack boxes, or isolated nodes
 
----
+------------------------------------------------------------
 
-## Workstation (Admin Node)
+#Ubiquiti UniFi U6+ Access Point
+Role: Wireless access for segmented VLANs
+Notes:
+- Receives all VLANs over tagged trunk
+- Broadcasts 5 SSIDs, each mapped to a VLAN
+  LAB-WIFI   → VLAN 20
+  HOME-WIFI  → VLAN 30
+  IOT-WIFI   → VLAN 40
+  GUEST-WIFI → VLAN 50
+  DMZ-WIFI   → VLAN 60
+- LAN VLAN (10) is not available over wireless
 
-- **Role:** Primary configuration and monitoring machine
-- **Functions:**
-  - Used to log into router/firewall interfaces
-  - Hosts configuration backups and planning files
-  - May later host lightweight observability tools (Uptime Kuma, Netdata)
+------------------------------------------------------------
 
----
+#Plex Media Server
+Role: Media streaming and throughput test
+Notes:
+- Deployed early for static IP and port forwarding validation
+- Moved to isolated VLAN with firewall-restricted access
 
-## Mobile Devices, Smart TV, etc.
+------------------------------------------------------------
 
-- **Role:** Network clients used to test normal traffic flows
-- **Current Setup:**
-  - All reside on same LAN (Phase 1)
-- **Planned Change:**
-  - Mobile/work devices will move to a trusted VLAN
-  - Media clients (TV, streamers) will shift to an isolated segment
+#Lab Workstation
+Role: Primary admin and configuration node
+Notes:
+- Accesses firewall, switch, and AP
+- Hosts configuration backups and test scripts
+- May run Netdata or monitoring in future phases
 
----
+------------------------------------------------------------
 
-## Future Devices
+#Wireless Clients (Laptops, Phones, Tablets)
+Role: Endpoint testing devices
+Notes:
+- Spread across VLANs based on SSID selection
+- Used to validate segmentation, wireless isolation, and DNS behavior
 
-### Protectli Mini PC (Planned Core Firewall)
+------------------------------------------------------------
 
-- **Planned Role:** Core gateway, router, and firewall for the entire network
-- **To Run:** OPNsense
-- **Responsibilities:**
-  - VLAN trunking
-  - Inter-VLAN firewall enforcement
-  - IDS/IPS services
-  - WireGuard/OpenVPN access
-  - DHCP relay and DNS overrides
+#Raspberry Pi 4 (Optional Utility Node)
+Role: Reserved for future use
+    Used for WAP controller via Docker container
+Notes:
+- May be used for DNS caching, syslog collection, or lightweight observability
 
-### Managed Switch (Planned)
+------------------------------------------------------------
 
-- **Planned Role:** VLAN-aware Layer 2 switching
-- **Purpose:**
-  - Enforce port-based segmentation
-  - Trunk VLANs to access points and service nodes
+#Legacy Devices (Phase 1 - Retired)
 
-### Dedicated AP (Planned)
+GL.iNet Flint AX1800 Router
+- Served as initial OpenWrt-based router
+- Used for early DHCP and firewall learning
+- No longer in use
 
-- **Planned Role:** VLAN-aware wireless access point
-- **Use Case:**
-  - Separate SSIDs tied to different VLANs (e.g., Work, Guest, IoT)
-  - Handled through trunk port from switch
-
+Technicolor CGM4140COM Gateway
+- ISP-provided all-in-one box
+- Locked firmware, no segmentation or control
+- Fully retired from the network
 

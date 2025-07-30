@@ -1,8 +1,10 @@
-Hostname,MAC Address,IP Address,VLAN,Device Type,Notes
-opnsense-fw,AA:BB:CC:DD:EE:01,10.10.10.1,10,Firewall,Primary gateway (planned)
-flint-router,AA:BB:CC:DD:EE:02,192.168.8.1,-,WiFi Router,Legacy router now demoted to AP
-plex-server,AA:BB:CC:DD:EE:03,10.20.20.10,20,Media Server,Static IP, hosts Plex services
-workstation-01,AA:BB:CC:DD:EE:04,10.10.10.11,10,Laptop/Main Admin,Used for administration
-iot-hub,AA:BB:CC:DD:EE:05,10.30.30.50,30,Smart Hub,Manages Zigbee devices
-guest-phone-01,AA:BB:CC:DD:EE:06,10.40.40.100,40,Guest Device,Internet-only access
-nas-server,AA:BB:CC:DD:EE:07,10.20.20.20,20,Storage,Future expansion for backups/media
+Hostname         | MAC Address         | IP Address     | VLAN | Device Type    | Notes
+-----------------|---------------------|----------------|------|----------------|--------------------------------------------
+opnsense-fw      | AA:BB:CC:DD:EE:01   | 10.10.10.1     | 10   | Firewall       | Primary gateway (planned)
+flint-router     | AA:BB:CC:DD:EE:02   | 192.168.8.1    | -    | WiFi Router    | Legacy router now demoted to AP
+plex-server      | AA:BB:CC:DD:EE:03   | 10.20.20.10    | 20   | Media Server   | Static IP, hosts Plex services
+workstation-01   | AA:BB:CC:DD:EE:04   | 10.10.10.11    | 10   | Laptop/Admin   | Used for administration
+iot-hub          | AA:BB:CC:DD:EE:05   | 10.30.30.50    | 30   | Smart Hub      | Manages Zigbee devices
+guest-phone-01   | AA:BB:CC:DD:EE:06   | 10.40.40.100   | 40   | Guest Device   | Internet-only access
+nas-server       | AA:BB:CC:DD:EE:07   | 10.20.20.20    | 20   | Storage        | Future expansion for backups/media
+

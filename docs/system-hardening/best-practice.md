@@ -1,88 +1,103 @@
-# Homelab Best Practices
+# best-practices.md
 
-This document outlines general best practices applied throughout the homelab to improve operational security, maintainability, and long-term scalability. These practices are followed across all systems and devices, from the firewall to internal service nodes.
+#Homelab Best Practices
 
----
+This document outlines general best practices applied throughout the homelab to
+improve operational security, maintainability, and long-term scalability. These
+principles are followed consistently across all systems and infrastructure
+components, from the firewall to internal service nodes.
 
-## Access & Authentication
+------------------------------------------------------------
 
-- Disable default usernames wherever possible
-- Enforce key-based SSH authentication; disable password login
-- Use strong local passwords and store securely offline
-- Limit admin-level access to a single user per system
-- Restrict management interfaces (web, SSH) to VLAN 10 only
+#Access and Authentication
 
----
+- Default usernames are disabled or removed wherever possible
+- SSH access uses key-based authentication only
+- Password login is disabled on all devices that support it
+- Strong local admin passwords are used and stored securely offline
+- All management interfaces (web, SSH, VPN) are restricted to VLAN 10
+- No administrative interfaces are reachable from the WAN
 
-## Segmentation & Surface Area Reduction
+------------------------------------------------------------
 
-- Apply the principle of least privilege to VLAN-to-VLAN access
-- Default deny all inter-VLAN traffic unless explicitly needed
-- Avoid “allow all” rules for diagnostics or convenience
-- Never expose management ports directly to WAN
-- Separate IoT, guests, media, and admin traffic via VLANs
+#Segmentation and Surface Area Reduction
 
----
+- VLANs are designed with least-privilege in mind
+- All inter-VLAN traffic is denied by default
+- Exceptions are tightly scoped and logged
+- Diagnostic shortcuts and "allow all" rules are avoided
+- IoT, guest, lab, and admin traffic are strictly separated at Layer 2
+- No VLAN has routing visibility unless explicitly required
 
-## DNS & IP Control
+------------------------------------------------------------
 
-- All core devices use static IPs
-- DNS rebinding protection is enforced
-- Internal DNS resolver configured with local host overrides
-- External DNS access restricted to trusted resolvers (e.g., Quad9, Cloudflare)
+#DNS and IP Control
 
----
+- All infrastructure devices use static IPs with defined reservations
+- Local DNS is resolved via OPNsense with hostname overrides
+- DNS rebinding protection is enforced at the resolver level
+- DNS requests are allowed only to internal resolver or trusted upstreams
+- External DNS resolution is limited to providers like Quad9 or Cloudflare
 
-## Software & Firmware
+------------------------------------------------------------
 
-- Disable auto-updates on all infrastructure
-- Apply updates only after reading changelogs and verifying impact
-- Perform test updates in a mock environment first when possible
-- Keep offline backups of current working configurations
+#Software and Firmware
 
----
+- Auto-updates are disabled on all infrastructure systems
+- Updates are applied only after changelogs are reviewed
+- When possible, updates are tested on a staging system before production
+- Configuration snapshots are taken before any firmware or package change
+- All updates are documented with version and timestamp
 
-## Backups
+------------------------------------------------------------
 
-- Maintain encrypted, versioned backups of:
-  - Firewall configs
-  - Router settings
-  - DHCP/DNS reservations
-  - Static mappings and IP plans
-- Store at least one backup copy offline and off-network
+#Backups
 
----
+- Backups are encrypted, versioned, and stored in multiple locations
+- At minimum, the following are backed up:
+  - OPNsense configuration exports
+  - Static DHCP and DNS mappings
+  - VLAN schema and port layout
+  - IP planning notes and interface design
+- One full backup is always stored offline and off-network
 
-## Monitoring & Alerting
+------------------------------------------------------------
 
-- Log firewall denials, VPN handshakes, and WAN activity
-- Monitor uptime and health with lightweight internal tools (e.g., Uptime Kuma)
-- Periodically review logs for unexpected behavior
-- Track open ports and run internal port scans to audit exposure
+#Monitoring and Alerting
 
----
+- All denied firewall traffic is logged
+- VPN connection events are recorded and reviewed
+- WAN interface hits are logged and alert thresholds are defined
+- Internal tools like Uptime Kuma or Netdata are used to track service uptime
+- Periodic internal port scans are performed to detect accidental exposure
 
-## Service Hosting
+------------------------------------------------------------
 
-- Only expose services that are necessary
-- Prefer internal reverse proxies with TLS for internal service access
-- Keep externally accessible services (e.g., Plex) isolated by VLAN and firewall scope
-- Use host-based firewalls in addition to network-level segmentation when applicable
+#Service Hosting
 
----
+- Only essential services are exposed internally or externally
+- Reverse proxies are preferred for internal web access (planned)
+- TLS is used for internal dashboard access wherever possible
+- Host-based firewalls are used on service nodes when supported
+- Externally reachable services (e.g., Plex) are fully isolated by VLAN
 
-## Operational Discipline
+------------------------------------------------------------
 
-- Document all changes to the network stack, even small ones
-- Commit rule changes and major config edits to version-controlled notes
-- Use staging/test environments for anything that affects the firewall or routing core
-- Assume that convenience shortcuts create long-term maintenance debt
+#Operational Discipline
 
----
+- All network changes are documented immediately
+- Firewall rules and switch configurations are version-controlled as text
+- All major changes are tested on a separate system when possible
+- No undocumented rules or exceptions are permitted
+- Convenience shortcuts are considered maintenance debt
 
-## Culture of Ownership
+------------------------------------------------------------
 
-This lab is built for deliberate control — not automation-first, not convenience-first. Every rule, device, and port exists for a reason, and every service earns its exposure.
+#Culture of Ownership
 
-Security is not an overlay — it's the foundation.
+This lab is built for deliberate control. It is not optimized for automation,
+and not driven by convenience. Every port, rule, and device is present for a
+reason. Every interface is intentional. Security is not an optional layer; it is
+the foundation of this design.
+
 
